@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Material Design Bootstrap</title>
+    <title>Mis crónicas como desarrollador</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
@@ -14,10 +14,18 @@
     <link href="css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="css/style.css" rel="stylesheet">
+    <style>
+        .carousel-item{
+            height: 500px;
+        }
+        .carousel-item img{
+            height: 500px;
+        }
+    </style>
+
 </head>
 
 <body>
-
     <!-- Start your project here-->
     <nav class="navbar navbar-expand-lg navbar-dark primary-color">
         <a class="navbar-brand" href="index.html">guiltydarkness1313</a>
@@ -112,13 +120,15 @@
     </div>
     <div class="container-fluid mt-4">
         <div class="row">
-            <div class="col-lg-9">
-                <h1>My first post!</h1>
-                <p>Feel free to contact me if you have a interesting project that need some of my skills</p>
-                <div class="card m-5" style="width: 22rem;">
+            <div class="col-lg-9" id="list-blog">
+                <div v-for="blog in data">
+                    <h1>{{blog.title}}</h1>
+                    <!--<p>Feel free to contact me if you have a interesting project that need some of my skills</p>-->
+                    <p>{{blog.content1}}</p>
+                    <div class="card m-5" style="width: 22rem;">
                     <!--Card image-->
                     <div class="view overlay">
-                        <img src="https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20%287%29.jpg" class="img-fluid" alt="">
+                        <img v-bind:src=blog.image class="img-fluid" alt="">
                         <a href="#">
                             <div class="mask rgba-white-slight"></div>
                         </a>
@@ -132,28 +142,72 @@
                         <a href="#" class="btn btn-primary">Button</a>
                     </div>
                 </div>
+                </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3" id="categories-list">
                 <div class="list-group">
-                    <a href="#!" class="list-group-item list-group-item-action active">
-                        Cras justo odio
-                    </a>
-                    <a href="#!" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
-                    <a href="#!" class="list-group-item list-group-item-action">Morbi leo risus</a>
-                    <a href="#!" class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
-                    <a href="#!" class="list-group-item list-group-item-action disabled">Vestibulum at eros</a>
+                    <div v-for="item in data">
+                        <a v-bind:href=item.name class="list-group-item list-group-item-action">{{item.name}}</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid">
-
     </div>
 
 <!--/.Card-->
 <!-- /Start your project here-->
 
 <!-- SCRIPTS -->
+<!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBL3hffvL-qeN-XmCg42h4SVkzz6fNlx7M",
+            authDomain: "my-github-pages-71893.firebaseapp.com",
+            databaseURL: "https://my-github-pages-71893.firebaseio.com",
+            projectId: "my-github-pages-71893",
+            storageBucket: "my-github-pages-71893.appspot.com",
+            messagingSenderId: "889378676037"
+        };
+        firebase.initializeApp(config);
+
+        /*var database = firebase.database();*/
+        const db = firebase.firestore();
+        var data = [];
+        var categories = [];
+
+        //var data = db.collection('blogs');
+        db.collection("blogs").get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                // doc.data() is never undefined for query doc snapshots
+                //console.log(doc.id, " => ", doc.data());
+                data.push(doc.data());
+            });
+            var app = new Vue({
+                el:'#list-blog',
+                data:{data}
+            });
+        });
+
+        db.collection("categorias").get().then(function(querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                //console.log(doc.id, " => ", doc.data());
+                categories.push(doc.data());
+            });
+            var app2 = new Vue({
+                el:'#categories-list',
+                data:''
+            });
+            app2.data = {categories}
+        });
+        console.log(categories);
+
+    </script>
 <!-- JQuery -->
 <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
 <!-- Bootstrap tooltips -->
